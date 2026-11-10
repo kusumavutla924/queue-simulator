@@ -2,6 +2,9 @@
 
 **Team members:** <fill in>   **Project:** 10 (Queue and Waiting Time Simulator)
 
+**Live app:** https://queue-simulator-hpsyvtcpbhnx5z3mbermpj.streamlit.app
+**Source code:** https://github.com/kusumavutla924/queue-simulator
+
 ## 1. Problem
 A service office wants to know how long customers wait with one or several counters, and whether
 adding one more counter helps. The app simulates the queue and reports waits and counter usage.
@@ -43,13 +46,18 @@ Timeline with two counters: counter 2 is Idle 0-1, Busy 1-4 (B), Busy 4-5 (D), I
 | 6 | 0 and 21 counters | ValueError | Pass |
 | 7 | Timeline, default data, 2 counters | counter 2 Idle 0-1, Busy B 1-4, Idle 5-6; counter 1 never idle | Pass |
 | 8 | Timeline, 1 counter | utilization 100% | Pass |
-A live HTTP form submission was also checked: the page showed average wait 3.50 and the timeline.
+| 9 | Deployed app, default data, 1 counter, then download CSV | file rows match waits 0,3,5,6 | Pass |
 
-## 6. Extension, limitations, reference code and AI assistance
+A live HTTP form submission was also checked: the page showed average wait 3.50 and the timeline. On the deployed app, 2 counters gave waits 0,0,2,1 (average 0.75).
+
+## 6. Deployment
+The app is deployed on Streamlit Community Cloud from the GitHub repository. `streamlit_app.py` is a Streamlit front end that calls the same `parse_people`, `simulate` and `build_timeline` functions as the local browser app. The result tables update when the Simulate button is pressed.
+
+## 7. Extension, limitations, reference code and AI assistance
 - **Extension:** busy/idle timeline and utilization per counter (extension task 1 of Project 10).
 - **Limitations:** integer minutes only; identical counters; no priorities; timeline ends at the last finish time;
   single local user.
 - **Reference code:** `common.py` and the base of `app.py` come from the DAA project assignment handout.
-  I only repaired CSS property names that were broken by PDF line wrapping (`border-radius`, `min-height`, `pre-wrap`).
+  I repaired CSS property names broken by PDF line wrapping (`border-radius`, `min-height`, `pre-wrap`) and moved page building into a `render_page` function so it can be reused.
 - **AI assistance:** Claude (Anthropic) helped write the extension, the tests, the README and this report.
   <Edit this section to state honestly what you did yourself.>
