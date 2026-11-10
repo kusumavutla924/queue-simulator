@@ -77,6 +77,28 @@ def rupees(paise):
     return f'Rs {paise / 100:.2f}'
 
 
+def render_page(title, view, token, extra=''):
+    """Build the full HTML page. Used by the local server and by WSGI hosting."""
+    body = '<!doctype html><html><meta charset="utf-8">'
+    body += '<meta name="viewport" content="width=device-width,initial-scale=1">'
+    body += '<title>' + esc(title) + '</title><style>'
+    body += 'body{font:16px system-ui;background:#eef2f6;margin:0;color:#182638}'
+    body += 'main{max-width:1000px;margin:24px auto;padding:24px;background:white;border-radius:12px}'
+    body += 'h1{font-size:28px}h2{font-size:21px;margin-top:30px}'
+    body += 'form{padding:16px;border:1px solid #cbd5e1;border-radius:8px;margin:12px 0}'
+    body += 'label{display:block;margin:10px 0}input,select,textarea{display:block;box-sizing:border-box;'
+    body += 'width:100%;padding:9px;font:inherit;border:1px solid #94a3b8;border-radius:5px}'
+    body += 'textarea{min-height:110px}button{background:#164e83;color:white;border:0;'
+    body += 'padding:10px 18px;border-radius:5px;font:inherit;cursor:pointer}'
+    body += 'table{border-collapse:collapse;width:100%}td,th{border:1px solid #cbd5e1;'
+    body += 'padding:9px;text-align:left;white-space:pre-wrap}th{background:#e2e8f0}'
+    body += '.scroll{overflow:auto}pre{white-space:pre-wrap}a{color:#164e83}'
+    body += '</style><body><main><h1>' + esc(title) + '</h1>'
+    body += note('DAA Project assignment | Local learning app')
+    body += extra + view() + '</main></body></html>'
+    return body.replace('{TOKEN}', token)
+
+
 def run(title, view, handle):
     token = secrets.token_urlsafe(24)
     port = int(os.environ.get('PORT', '8000'))
@@ -85,24 +107,7 @@ def run(title, view, handle):
 
     class Handler(BaseHTTPRequestHandler):
         def send_page(self, extra=''):
-            body = '<!doctype html><html><meta charset="utf-8">'
-            body += '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            body += '<title>' + esc(title) + '</title><style>'
-            body += 'body{font:16px system-ui;background:#eef2f6;margin:0;color:#182638}'
-            body += 'main{max-width:1000px;margin:24px auto;padding:24px;background:white;border-radius:12px}'
-            body += 'h1{font-size:28px}h2{font-size:21px;margin-top:30px}'
-            body += 'form{padding:16px;border:1px solid #cbd5e1;border-radius:8px;margin:12px 0}'
-            body += 'label{display:block;margin:10px 0}input,select,textarea{display:block;box-sizing:border-box;'
-            body += 'width:100%;padding:9px;font:inherit;border:1px solid #94a3b8;border-radius:5px}'
-            body += 'textarea{min-height:110px}button{background:#164e83;color:white;border:0;'
-            body += 'padding:10px 18px;border-radius:5px;font:inherit;cursor:pointer}'
-            body += 'table{border-collapse:collapse;width:100%}td,th{border:1px solid #cbd5e1;'
-            body += 'padding:9px;text-align:left;white-space:pre-wrap}th{background:#e2e8f0}'
-            body += '.scroll{overflow:auto}pre{white-space:pre-wrap}a{color:#164e83}'
-            body += '</style><body><main><h1>' + esc(title) + '</h1>'
-            body += note('DAA Project assignment | Local learning app')
-            body += extra + view() + '</main></body></html>'
-            body = body.replace('{TOKEN}', token).encode('utf-8')
+            body = render_page(title, view, token, extra).encode('utf-8')
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.send_header('Content-Length', str(len(body)))
