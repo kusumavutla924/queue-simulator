@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: queue-simulator
+    runtime: python
+    plan: free
+    buildCommand: echo "nothing to build"
+    startCommand: python 10_queue_simulator/app.py
